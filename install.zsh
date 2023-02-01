@@ -1,16 +1,10 @@
 #!/bin/zsh
 
+# Install chezmoi with my personal dotfile repository and apply latest files
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply karimbenbourenane
+
 # Install Homebrew
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install chezmoi
-brew install chezmoi
-
-# Initialize chezmoi with my personal dotfile repository
-chezmoi init git@github.com:karimbenbourenane/dotfiles.git
-
-# Pull and apply latest versions of dotfiles
-chezmoi update
 
 # Install all system packages, desktop applications, and App Store applications
 brew bundle --file "$HOME/.config/brew/Brewfile" install
@@ -21,5 +15,5 @@ brew bundle --file "$HOME/.config/brew/Brewfile" install
 # Install and update all Antigen bundles
 antigen update
 
-# Install and update all vim-plug plugins
-vi -E -s -u "$HOME/.vim/vimrc" +PlugUpgrade +PlugUpdate +PlugClean +qall
+# Install all vim-plug plugins
+vi -E -s -u "$HOME/.vim/vimrc" +qall
