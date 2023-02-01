@@ -3,7 +3,7 @@ Karim Benbourenane's personal macOS development environment installer script.
 
 `/bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/karimbenbourenane/macos-installer/master/install.zsh)"`
 
-Paste that into a macOS Terminal and hit `enter` to run the installer
+Paste that into a macOS Terminal and hit `enter` to run the installer.
 
 ## What does it do?
 In the following order, this script
@@ -24,7 +24,7 @@ In the following order, this script
       - `Antigen`
       - `vim-plug`
 7. Installs all `Antigen` zsh plugins defined in the configuration
-8. Executes the `update` to get all packages and plugins up to date
+8. Executes the `update` function to get all packages and plugins up to date
 
 ## Can I use this?
 No. If you're reading this and you're not me, this script of of zero value to you. It requires access to the private dotfile repository, which only I have access to. I'm hosting this project publicly so that I can quickly bootstrap a new machine at a moments notice by running a single command.
