@@ -22,4 +22,4 @@ brew bundle --file "$HOME/.config/brew/Brewfile" install
 antigen update
 
 # Install and update all vim-plug plugins
-vi -E -s -u "$HOME/.vimrc" +PlugUpgrade +PlugUpdate +PlugClean +qall
+vi -E -s -u "$HOME/.vim/vimrc" +PlugUpgrade +PlugUpdate +PlugClean +qall
