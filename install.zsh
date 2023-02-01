@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Install chezmoi with my personal dotfile repository and apply latest files
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply karimbenbourenane
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$(mktemp -d)" init karimbenbourenane --ssh --apply
 
 # Install Homebrew
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
