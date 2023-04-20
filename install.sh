@@ -4,11 +4,15 @@
 echo "Installing dotfiles"
 echo "For more information, see https://github.com/karimbenbourenane/macos-installer"
 
-# Install chezmoi, Oh My Zsh, and Homebrew
+# Install chezmoi, Oh My Zsh
 echo "Installing chezmoi"
 /bin/sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$(mktemp -d)" init karimbenbourenane --ssh --apply
+
+# Install Oh My Zsh
 echo "Installing Oh My Zsh"
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Install Homebrew
 echo "Installing Homebrew"
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
