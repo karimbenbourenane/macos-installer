@@ -14,7 +14,9 @@ if [ -d '/opt/homebrew/share' ]; then
 fi
 
 # Load zsh startup files pulled in by chezmoi
+# shellcheck source=/Users/karim/.config/zsh/.zshenv
 . "$HOME/.config/zsh/.zshenv"
+# shellcheck source=/Users/karim/.config/zsh/.zshrc
 . "$HOME/.config/zsh/.zshrc"
 
 # Install all vim-plug plugins
