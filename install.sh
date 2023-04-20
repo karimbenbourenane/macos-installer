@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# TODO: Make this installer script multi-platform and multi-shell compatible
+
 # Begin installation
 echo "Installing dotfiles"
 echo "For more information, see https://github.com/karimbenbourenane/macos-installer"
