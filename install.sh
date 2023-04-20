@@ -22,14 +22,10 @@ if [ -d '/opt/homebrew/share' ]; then
 	/bin/chmod -R go-w '/opt/homebrew/share'
 fi
 
-# Load zsh startup files pulled in by chezmoi
-echo "Loading zsh startup files"
-. "$HOME/.config/zsh/.zshenv"
-. "$HOME/.config/zsh/.zshrc"
-
 # Install all vim-plug plugins
 echo "Installing vim-plug plugins"
 /usr/bin/vi -E -s -u "$HOME/.vim/vimrc" +quitall
 
 # Complete installation
 echo "Installation complete"
+echo "Please open a new shell session to complete the installation"
