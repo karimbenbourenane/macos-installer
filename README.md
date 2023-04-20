@@ -12,20 +12,15 @@ In the following order, this script
    - The dotfile repository is not public
 3. Pulls down and stages all the latest dotfiles in that repository
    - Includes configuration for `Homebrew` brew bundles via `Brewfile`
-   - Includes configuration for `Antigen` zsh plugin manager via `antigenrc`
    - Includes configuration for `vim-plug` vim plugin manager via `vimrc`
    - Includes configuration for several other things like ssh, git, and gpg
 4. Installs the `Homebrew` package manager
 5. Installs all `Homebrew` bundles in `Brewfile`
-   - Includes `Antigen` zsh plugin manager
 6. Sources the freshly retrieved zsh configuration files from `chezmoi`
-   - Allows `Antigen` to become usable within the same shell session
    - Includes a zsh `update` function that keeps packages and plugins up to date
       - Keeps `Homebrew` bundles updated
-      - Keeps `Antigen` plugins updated
       - Keeps `vim-plug` plugins updated
-7. Installs all `Antigen` zsh plugins in `antigenrc`
-8. Installs `vim-plug` and vim plugins in `vimrc`
+7. Installs `vim-plug` and vim plugins in `vimrc`
 
 ## Can I use this?
 No. If you're reading this and you're not me, this script of of zero value to you. It requires access to the private dotfile repository, which only I have access to. I'm hosting this project publicly so that I can quickly bootstrap a new machine at a moments notice by running a single command.
