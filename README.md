@@ -1,7 +1,7 @@
 # macos-installer
 Karim Benbourenane's personal macOS installer script. For both fun and profit. Aquick way to prepare a fresh machine to have all the tools of the trade as well as personal artifacts, the way I like it.
 
-`/bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/karimbenbourenane/macos-installer/master/install.zsh)"`
+`/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/karimbenbourenane/macos-installer/master/install.sh)"`
 
 Paste that into a macOS Terminal and hit `enter` to run the installer.
 
