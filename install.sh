@@ -10,7 +10,7 @@ brew bundle --file "$HOME/.config/brew/Brewfile" install
 
 # Fix permissions for some Homebrew packages on Apple Silicon
 if [ -d '/opt/homebrew/share' ]; then
-  /bin/chmod -R go-w '/opt/homebrew/share'
+	/bin/chmod -R go-w '/opt/homebrew/share'
 fi
 
 # Load zsh startup files pulled in by chezmoi
