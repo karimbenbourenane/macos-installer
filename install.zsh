@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 # Install Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -17,7 +17,7 @@ if [ -d '/opt/homebrew/share' ]; then
   chmod -R go-w '/opt/homebrew/share'
 fi
 
-# Load zsh startup files
+# Load zsh startup files pulled in by chezmoi
 . "$HOME/.config/zsh/.zshenv"
 . "$HOME/.config/zsh/.zshrc"
 
