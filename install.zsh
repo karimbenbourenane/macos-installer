@@ -1,19 +1,25 @@
 #!/bin/zsh
 
-# Install chezmoi with my personal dotfile repository and apply latest files
+# Install Oh My Zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Install chezmoi
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$(mktemp -d)" init karimbenbourenane --ssh --apply
 
 # Install Homebrew
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install all system packages, desktop applications, and App Store applications
+# Install bundles (system packages and desktop applications)
 brew bundle --file "$HOME/.config/brew/Brewfile" install
 
-# Load Antigen and make system update function available
-. "$HOME/.zshrc"
+# Fix permissions for some Homebrew packages on Apple Silicon
+if [ -d '/opt/homebrew/share' ]; then
+  chmod -R go-w '/opt/homebrew/share'
+fi
 
-# Install and update all Antigen bundles
-antigen update
+# Load zsh startup files
+. "$HOME/.config/zsh/.zshenv"
+. "$HOME/.config/zsh/.zshrc"
 
 # Install all vim-plug plugins
-vi -E -s -u "$HOME/.vim/vimrc" +qall
+vi -E -s -u "$HOME/.vim/vimrc" +quitall
