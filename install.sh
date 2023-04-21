@@ -12,6 +12,7 @@ echo "Installing chezmoi"
 
 # Install Oh My Zsh
 echo "Installing Oh My Zsh"
+export ZDOTDIR="$HOME/.config/zsh"  # set ZDOTDIR to install Oh My Zsh in the correct location
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Install Homebrew
