@@ -31,7 +31,7 @@ fi
 
 # Install PyCharm script
 echo "Installing PyCharm script"
-if $(command -v brew) list pycharm &>/dev/null; then
+if $(command -v brew) list pycharm >/dev/null 2>&1; then
   sudo cp ~/.local/share/bin/pycharm /usr/local/bin/pycharm
   sudo chown root:wheel /usr/local/bin/pycharm
   sudo chmod +x /usr/local/bin/pycharm
