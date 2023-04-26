@@ -29,6 +29,14 @@ if [ -d '/opt/homebrew/share' ]; then
 	/bin/chmod -R go-w '/opt/homebrew/share'
 fi
 
+# Install PyCharm script
+echo "Installing PyCharm script"
+if $(command -v brew) list pycharm ; then
+  sudo cp ~/.local/share/bin/pycharm /usr/local/bin
+else
+  echo "PyCharm is not installed"
+fi
+
 # Install all vim-plug plugins
 echo "Installing vim-plug plugins"
 /usr/bin/vi -E -s -u "$HOME/.vim/vimrc" +quitall
