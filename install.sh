@@ -43,6 +43,10 @@ fi
 echo "Installing vim-plug plugins"
 /usr/bin/vi -E -s -u "$HOME/.vim/vimrc" +quitall
 
+# Install Github Copilot for command line
+echo "Installing Github Copilot for command line"
+gh extension install github/copilot-cli --force
+
 # Complete installation
 echo "Installation complete"
 echo "Please open a new shell session to complete the installation"
