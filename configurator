@@ -1,16 +1,61 @@
 #!/bin/sh
 
-# TODO: Make this installer script multi-platform and multi-shell compatible
+# TODO: Make this installer script multi-platform and multi-shell compatible.
 
-# Begin installation
+# Help message.
+trap 'unset help_text' EXIT
+help_text=$(cat <<EOF
+Usage: $0 [OPTIONS]
+
+OPTIONS:
+  --username <github-username>   Specify your GitHub username.
+  --help                         Show this help message.
+
+If no username is provided, the script will prompt for it interactively.
+For more information, see https://github.com/karimbenbourenane/macos-installer
+EOF
+)
+
+# Default GitHub username.
+trap 'unset github_username' EXIT
+github_username=""
+
+# Parse command-line arguments.
+while [ "$1" != "" ]; do
+  case "$1" in
+  --username)
+    shift
+    github_username="$1"
+    ;;
+  --help)
+    echo "$help_text"
+    exit 0
+    ;;
+  *)
+    echo "Invalid option: $1"
+    echo "$help_text"
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+# If no username is provided, prompt the user.
+if [ -z "$github_username" ]; then
+  echo "Enter your GitHub username: "
+  read -r github_username
+fi
+
+# Begin installation.
 echo "Begin system configurator..."
-echo "For more information, see https://github.com/karimbenbourenane/macos-installer"
+echo "See https://github.com/karimbenbourenane/macos-installer for more info."
 
-# Install chezmoi
+# Install chezmoi.
 echo "Installing chezmoi and dotfiles..."
-/bin/sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$(mktemp -d)" init karimbenbourenane --ssh --apply
+/bin/sh -c "$(curl -fsLS get.chezmoi.io)" \
+  -- -b "$(mktemp -d)" init "$github_username" --ssh --apply
 
-# Create XDG directories
+# Create XDG directories.
 echo "Creating XDG directories..."
 mkdir -p "$HOME"/.config
 mkdir -p "$HOME"/.local/bin
@@ -18,43 +63,46 @@ mkdir -p "$HOME"/.local/share
 mkdir -p "$HOME"/.local/state
 mkdir -p "$HOME"/.cache/run
 
-# Install Oh My Zsh
+# Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
-export ZDOTDIR="$HOME/.config/zsh" # set ZDOTDIR to install Oh My Zsh in the correct location
-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+echo "export ZDOTDIR=\"\$HOME\"/.config/zsh" >> /etc/zshenv
+export ZDOTDIR="$HOME/.config/zsh"
+/bin/sh -c "$(curl -fsSL \
+  https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# Install Homebrew
+# Install Homebrew.
 echo "Installing Homebrew..."
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+/bin/bash -c "$(curl -fsSL \
+  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install bundles (system packages and desktop applications)
+# Install bundles (system packages and desktop applications).
 echo "Installing Homebrew bundles..."
 $(command -v brew) bundle --file "$HOME/.config/brew/Brewfile" install
 
-# Fix permissions for some Homebrew packages on Apple Silicon
+# Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
   echo "Fixing permissions for Homebrew packages..."
   /bin/chmod -R go-w '/opt/homebrew/share'
 fi
 
-# Install PyCharm script
+# Install PyCharm script.
 echo "Installing PyCharm script..."
 if $(command -v brew) list pycharm >/dev/null 2>&1; then
   sudo cp ~/.local/share/bin/pycharm /usr/local/bin/pycharm
   sudo chown root:wheel /usr/local/bin/pycharm
   sudo chmod +x /usr/local/bin/pycharm
 else
-  echo "PyCharm is not installed"
+  echo "PyCharm is not installed."
 fi
 
-# Install all vim-plug plugins
+# Install all vim-plug plugins.
 echo "Installing vim-plug plugins..."
-/usr/bin/vi -E -s -u "$HOME/.vim/vimrc" +quitall
+/usr/bin/vi -Esu "$HOME/.config/vim/vimrc" +quitall
 
-# Install Github Copilot for command line
+# Install Github Copilot for command line.
 echo "Installing Github Copilot for command line..."
 gh extension install github/copilot-cli --force
 
-# Complete installation
-echo "System configurator completed"
-echo "Please open a new shell session to complete the installation"
+# Complete installation.
+echo "System configurator completed."
+echo "Please open a new shell session to complete the installation."
