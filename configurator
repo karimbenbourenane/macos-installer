@@ -65,7 +65,6 @@ mkdir -p "$HOME"/.cache/run
 
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
-echo "export ZDOTDIR=\"\$HOME\"/.config/zsh" >> /etc/zshenv
 export ZDOTDIR="$HOME/.config/zsh"
 /bin/sh -c "$(curl -fsSL \
   https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
