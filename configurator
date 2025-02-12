@@ -58,7 +58,7 @@ sudo sh -c 'sed -i "" "s/^#auth/auth/" /etc/pam.d/sudo_local'
 
 # Install chezmoi.
 echo "Installing chezmoi and dotfiles..."
-/bin/sh -c "$(curl -fsLS get.chezmoi.io)" \
+sh -c "$(curl -fsLS get.chezmoi.io)" \
   -- -b "$(mktemp -d)" init "$github_username" --ssh --apply
 
 # Create XDG directories.
@@ -72,12 +72,12 @@ mkdir -p "$HOME"/.cache/run
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
 export ZDOTDIR="$HOME/.config/zsh"
-/bin/sh -c "$(curl -fsSL \
+sh -c "$(curl -fsSL \
   https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Install Homebrew.
 echo "Installing Homebrew..."
-/bin/bash -c "$(curl -fsSL \
+bash -c "$(curl -fsSL \
   https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install bundles (system packages and desktop applications).
@@ -87,7 +87,7 @@ $(command -v brew) bundle --file "$HOME/.config/brew/Brewfile" install
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
   echo "Fixing permissions for Homebrew packages..."
-  /bin/chmod -R go-w '/opt/homebrew/share'
+  chmod -R go-w '/opt/homebrew/share'
 fi
 
 # Install PyCharm script.
@@ -102,7 +102,7 @@ fi
 
 # Install all vim-plug plugins.
 echo "Installing vim-plug plugins..."
-/usr/bin/vi -Esu "$HOME/.config/vim/vimrc" +quitall
+vi -Esu "$HOME/.config/vim/vimrc" +quitall
 
 # Install Github Copilot for command line.
 echo "Installing Github Copilot for command line..."
