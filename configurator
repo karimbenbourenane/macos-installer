@@ -1,10 +1,11 @@
 #!/bin/sh
-
+# configurator - System software and environment bootstrapping for macOS.
 # TODO: Make this installer script multi-platform and multi-shell compatible.
 
 # Help message.
 trap 'unset help_text' EXIT
-help_text=$(cat <<EOF
+help_text=$(
+  cat <<EOF
 Usage: $0 [OPTIONS]
 
 OPTIONS:
@@ -49,6 +50,11 @@ fi
 # Begin installation.
 echo "Begin system configurator..."
 echo "See https://github.com/karimbenbourenane/macos-installer for more info."
+
+# Enable Touch ID for sudo.
+echo "Enabling Touch ID for sudo..."
+sudo sh -c 'cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local'
+sudo sh -c 'sed -i "" "s/^#auth/auth/" /etc/pam.d/sudo_local'
 
 # Install chezmoi.
 echo "Installing chezmoi and dotfiles..."
