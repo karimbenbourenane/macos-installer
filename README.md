@@ -14,9 +14,6 @@ BASE_URI="https://raw.githubusercontent.com/karimbenbourenane/macos-installer"
 /bin/sh -c "$(curl -fsSL ${BASE_URI}/master/configurator)"
 ```
 
-
-Paste the above command into a macOS Terminal and execute it to run the installer.
-
 ## What does it do?
 
 The `configurator` script does some heavy lifting in setting up a new machine.
