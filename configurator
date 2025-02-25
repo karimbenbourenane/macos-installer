@@ -2,44 +2,45 @@
 # configurator - System software and environment bootstrapping for macOS.
 # TODO: Make this installer script multi-platform and multi-shell compatible.
 
-# Help message.
-trap 'unset help_text' EXIT
-help_text=$(
+# Usage message.
+usage() {
   cat <<EOF
 Usage: $0 [OPTIONS]
 
 OPTIONS:
-  --username <github-username>   Specify your GitHub username.
-  --help                         Show this help message.
+  --username, -u <github-username>   Specify your GitHub username.
+  --help, -h                         Show this help message and exit.
 
 If no username is provided, the script will prompt for it interactively.
 For more information, see https://github.com/karimbenbourenane/macos-installer
 EOF
-)
+}
+
+if [ $# -gt 2 ]; then
+  echo "Error: Too many arguments. At most two arguments are allowed."
+  usage
+  exit 1
+fi
 
 # Default GitHub username.
-trap 'unset github_username' EXIT
 github_username=""
 
 # Parse command-line arguments.
-while [ "$1" != "" ]; do
-  case "$1" in
-  --username)
-    shift
-    github_username="$1"
-    ;;
-  --help)
-    echo "$help_text"
-    exit 0
-    ;;
-  *)
-    echo "Invalid option: $1"
-    echo "$help_text"
-    exit 1
-    ;;
-  esac
+case "$1" in
+--username | -u)
   shift
-done
+  github_username="$1"
+  ;;
+--help | -h)
+  usage
+  exit 0
+  ;;
+*)
+  echo "Invalid option: $1"
+  usage
+  exit 1
+  ;;
+esac
 
 # If no username is provided, prompt the user.
 if [ -z "$github_username" ]; then
@@ -69,6 +70,10 @@ mkdir -p "$HOME"/.local/share
 mkdir -p "$HOME"/.local/state
 mkdir -p "$HOME"/.cache/run
 
+# Set Zsh configuration directory globally to use standard XDG location.
+# TODO: backup the original file if it already exists.
+sudo sh -c 'echo "ZDOTDIR=\"\$HOME\"/.config/zsh" > /etc/zshenv'
+
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
 export ZDOTDIR="$HOME/.config/zsh"
@@ -90,12 +95,15 @@ if [ -d '/opt/homebrew/share' ]; then
   chmod -R go-w '/opt/homebrew/share'
 fi
 
-# Install PyCharm script.
-echo "Installing PyCharm script..."
+# Check local scripts.
+echo "Checking local scripts..."
 if $(command -v brew) list pycharm >/dev/null 2>&1; then
-  sudo cp ~/.local/share/bin/pycharm /usr/local/bin/pycharm
-  sudo chown root:wheel /usr/local/bin/pycharm
-  sudo chmod +x /usr/local/bin/pycharm
+  if [ -f "$HOME/.local/bin/pycharm" ]; then
+    chmod +x "$HOME/.local/bin/pycharm"
+    echo "PyCharm script can be found at $HOME/.local/bin/pycharm."
+  else
+    echo "PyCharm script is missing from $HOME/.local/bin/pycharm."
+  fi
 else
   echo "PyCharm is not installed."
 fi
