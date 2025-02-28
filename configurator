@@ -72,11 +72,11 @@ mkdir -p "$HOME"/.cache/run
 
 # Set Zsh configuration directory globally to use standard XDG location.
 # TODO: backup the original file if it already exists.
-sudo sh -c 'echo "ZDOTDIR=\"\$HOME\"/.config/zsh" > /etc/zshenv'
+sudo sh -c 'echo "ZDOTDIR=\"\$HOME\"/.config/shell/zsh" > /etc/zshenv'
 
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
-export ZDOTDIR="$HOME/.config/zsh"
+export ZDOTDIR="$HOME/.config/shell/zsh"
 sh -c "$(curl -fsSL \
   https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
