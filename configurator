@@ -4,7 +4,7 @@
 
 # Usage message.
 usage() {
-  cat <<EOF
+  tee <<EOF
 Usage: $0 [OPTIONS]
 
 OPTIONS:
@@ -68,15 +68,22 @@ mkdir -p "$HOME"/.config
 mkdir -p "$HOME"/.local/bin
 mkdir -p "$HOME"/.local/share
 mkdir -p "$HOME"/.local/state
-mkdir -p "$HOME"/.cache/run
+
+# Load XDG logout script.
+launchctl load ~/Library/LaunchAgents/org.freedesktop.specifications.plist
 
 # Set Zsh configuration directory globally to use standard XDG location.
 # TODO: backup the original file if it already exists.
-sudo sh -c 'echo "ZDOTDIR=\"\$HOME\"/.config/shell/zsh" > /etc/zshenv'
+sudo sh -c 'tee -a /tmp/zshenv >/dev/null <<EOF
+# Inform Jetbrains IDEs where \$ZDOTDIR is located and set \$ZDOTDIR if empty.
+_INTELLIJ_ORIGINAL_ZDOTDIR="\$HOME"/.config/zsh
+ZDOTDIR=\${ZDOTDIR:-"\$_INTELLIJ_ORIGINAL_ZDOTDIR"}
+EOF'
 
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
-export ZDOTDIR="$HOME/.config/shell/zsh"
+export ZDOTDIR="$HOME/.config/zsh"
+export ZSH="$HOME/.local/share/ohmyzsh"
 sh -c "$(curl -fsSL \
   https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
