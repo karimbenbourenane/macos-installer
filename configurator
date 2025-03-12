@@ -74,10 +74,13 @@ launchctl load ~/Library/LaunchAgents/org.freedesktop.specifications.plist
 
 # Set Zsh configuration directory globally to use standard XDG location.
 # TODO: backup the original file if it already exists.
-sudo sh -c 'tee -a /tmp/zshenv >/dev/null <<EOF
-# Inform Jetbrains IDEs where \$ZDOTDIR is located and set \$ZDOTDIR if empty.
-_INTELLIJ_ORIGINAL_ZDOTDIR="\$HOME"/.config/zsh
-ZDOTDIR=\${ZDOTDIR:-"\$_INTELLIJ_ORIGINAL_ZDOTDIR"}
+sudo sh -c 'tee -a /etc/zshenv >/dev/null <<EOF
+# Inform Jetbrains IDEs of $ZDOTDIR's true path and set $ZDOTDIR if empty.
+if [ -n "${ZDOTDIR}" ] && [ "${ZDOTDIR}" != "${HOME}"/.config/zsh ]; then
+    _INTELLIJ_ORIGINAL_ZDOTDIR="${HOME}"/.config/zsh
+else
+    ZDOTDIR="${HOME}"/.config/zsh
+fi
 EOF'
 
 # Install Oh My Zsh.
