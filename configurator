@@ -81,7 +81,7 @@ if [ -n "${ZDOTDIR}" ] && [ "${ZDOTDIR}" != "${HOME}"/.config/zsh ]; then
 else
     ZDOTDIR="${HOME}"/.config/zsh
 fi
-EOF'
+EOF
 
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
@@ -97,7 +97,7 @@ bash -c "$(curl -fsSL \
 
 # Install bundles (system packages and desktop applications).
 echo "Installing Homebrew bundles..."
-$(command -v brew) bundle --file "$HOME/.config/brew/Brewfile" install
+$(command -v brew) bundle --file "$HOME/.config/homebrew/Brewfile" install
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
