@@ -43,7 +43,7 @@ case "$1" in
 esac
 
 # If no username is provided, prompt the user.
-if [ -z "$github_username" ]; then
+if [ -z "${github_username}" ]; then
   echo "Enter your GitHub username: "
   read -r github_username
 fi
@@ -59,15 +59,15 @@ sudo sh -c 'sed -i "" "s/^#auth/auth/" /etc/pam.d/sudo_local'
 
 # Install chezmoi.
 echo "Installing chezmoi and dotfiles..."
-sh -c "$(curl -fsLS get.chezmoi.io)" \
-  -- -b "$(mktemp -d)" init "$github_username" --ssh --apply
+sh -c "$(curl -fsLS get.chezmoi.io || true)" \
+  -- -b "$(mktemp -d || true)" init "${github_username}" --ssh --apply
 
 # Create XDG directories.
 echo "Creating XDG directories..."
-mkdir -p "$HOME"/.config
-mkdir -p "$HOME"/.local/bin
-mkdir -p "$HOME"/.local/share
-mkdir -p "$HOME"/.local/state
+mkdir -p "${HOME}"/.config
+mkdir -p "${HOME}"/.local/bin
+mkdir -p "${HOME}"/.local/share
+mkdir -p "${HOME}"/.local/state
 
 # Load XDG logout script.
 launchctl load ~/Library/LaunchAgents/org.freedesktop.specifications.plist
@@ -75,29 +75,30 @@ launchctl load ~/Library/LaunchAgents/org.freedesktop.specifications.plist
 # Set Zsh configuration directory globally to use standard XDG location.
 # TODO: backup the original file if it already exists.
 sudo sh -c 'tee -a /etc/zshenv >/dev/null <<EOF
-# Inform Jetbrains IDEs of $ZDOTDIR's true path and set $ZDOTDIR if empty.
+# Inform Jetbrains IDEs of ${ZDOTDIR}s true path and set ${ZDOTDIR} if empty.
 if [ -n "${ZDOTDIR}" ] && [ "${ZDOTDIR}" != "${HOME}"/.config/zsh ]; then
     _INTELLIJ_ORIGINAL_ZDOTDIR="${HOME}"/.config/zsh
 else
     ZDOTDIR="${HOME}"/.config/zsh
 fi
-EOF
+EOF'
 
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
-export ZDOTDIR="$HOME/.config/zsh"
-export ZSH="$HOME/.local/share/ohmyzsh"
-sh -c "$(curl -fsSL \
-  https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+export ZDOTDIR="${HOME}/.config/zsh"
+export ZSH="${HOME}/.local/share/ohmyzsh"
+curl -fsSL \
+  https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh \
+  | sh
 
 # Install Homebrew.
 echo "Installing Homebrew..."
-bash -c "$(curl -fsSL \
-  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+curl -fsSL \
+  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 
 # Install bundles (system packages and desktop applications).
 echo "Installing Homebrew bundles..."
-$(command -v brew) bundle --file "$HOME/.config/homebrew/Brewfile" install
+$(command -v brew) bundle --file "${HOME}/.config/homebrew/Brewfile" install
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
@@ -108,11 +109,11 @@ fi
 # Check local scripts.
 echo "Checking local scripts..."
 if $(command -v brew) list pycharm >/dev/null 2>&1; then
-  if [ -f "$HOME/.local/bin/pycharm" ]; then
-    chmod +x "$HOME/.local/bin/pycharm"
-    echo "PyCharm script can be found at $HOME/.local/bin/pycharm."
+  if [ -f "${HOME}/.local/bin/pycharm" ]; then
+    chmod +x "${HOME}/.local/bin/pycharm"
+    echo "PyCharm script can be found at ${HOME}/.local/bin/pycharm."
   else
-    echo "PyCharm script is missing from $HOME/.local/bin/pycharm."
+    echo "PyCharm script is missing from ${HOME}/.local/bin/pycharm."
   fi
 else
   echo "PyCharm is not installed."
@@ -120,7 +121,7 @@ fi
 
 # Install all vim-plug plugins.
 echo "Installing vim-plug plugins..."
-vi -Esu "$HOME/.config/vim/vimrc" +quitall
+vi -Esu "${HOME}/.config/vim/vimrc" +quitall
 
 # Install Github Copilot for command line.
 echo "Installing Github Copilot for command line..."
