@@ -52,6 +52,11 @@ fi
 echo "Begin system configurator..."
 echo "See https://github.com/karimbenbourenane/macos-installer for more info."
 
+# Install the Command Line Tools and create system Python symlinks.
+xcode-select --install
+sudo ln -s /Library/Developer/CommandLineTools/usr/bin/python3 /usr/local/bin/python
+sudo ln -s /Library/Developer/CommandLineTools/usr/bin/pip3 /usr/local/bin/pip
+
 # Enable Touch ID for sudo.
 echo "Enabling Touch ID for sudo..."
 sudo sh -c 'cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local'
