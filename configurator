@@ -103,9 +103,10 @@ echo "Installing Homebrew..."
 curl -fsSL \
   https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 
-# Install bundles (system packages and desktop applications).
+# Install bundles (system packages and desktop apps) and pin opensc to 0.23.0.
 echo "Installing Homebrew bundles..."
 $(command -v brew) bundle --file "${HOME}/.config/homebrew/Brewfile" install
+$(command -v brew) cu pin opensc
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
