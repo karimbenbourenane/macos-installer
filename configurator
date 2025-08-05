@@ -103,16 +103,20 @@ echo "Installing Homebrew..."
 curl -fsSL \
   https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 
-# Install bundles (system packages and desktop apps) and pin opensc to 0.23.0.
+# Install bundles (system packages and desktop apps).
 echo "Installing Homebrew bundles..."
 $(command -v brew) bundle --file "${HOME}/.config/homebrew/Brewfile" install
-$(command -v brew) cu pin opensc
+sudo mkdir -p /usr/local/lib
+sudo install -m 755 $(brew --prefix)/lib/libykcs11.dylib /usr/local/lib
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
   echo "Fixing permissions for Homebrew packages..."
   chmod -R go-w '/opt/homebrew/share'
 fi
+
+# Load Google Drive unlink script.
+launchctl load ~/Library/LaunchAgents/local.unlink-google-drive.plist
 
 # Check local scripts.
 echo "Checking local scripts..."
