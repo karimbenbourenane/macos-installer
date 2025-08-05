@@ -54,8 +54,9 @@ echo "See https://github.com/karimbenbourenane/macos-installer for more info."
 
 # Install the Command Line Tools and create system Python symlinks.
 xcode-select --install
-sudo ln -s /Library/Developer/CommandLineTools/usr/bin/python3 /usr/local/bin/python
-sudo ln -s /Library/Developer/CommandLineTools/usr/bin/pip3 /usr/local/bin/pip
+clt_path=/Library/Developer/CommandLineTools
+sudo ln -s "${clt_path}"/usr/bin/python3 /usr/local/bin/python
+sudo ln -s "${clt_path}"/usr/bin/pip3 /usr/local/bin/pip
 
 # Enable Touch ID for sudo.
 echo "Enabling Touch ID for sudo..."
@@ -94,20 +95,22 @@ EOF
 echo "Installing Oh My Zsh..."
 export ZDOTDIR="${HOME}/.config/zsh"
 export ZSH="${HOME}/.local/share/ohmyzsh"
-curl -fsSL \
-  https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh \
-  | sh
+omz_install_path=ohmyzsh/ohmyzsh/master/tools/install.sh
+curl -fsSL "https://raw.githubusercontent.com/${omz_install_path}" | sh
 
 # Install Homebrew.
 echo "Installing Homebrew..."
-curl -fsSL \
-  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+homebrew_install_path="Homebrew/install/HEAD/install.sh"
+curl -fsSL "${homebrew_install_path}" | bash
 
 # Install bundles (system packages and desktop apps).
 echo "Installing Homebrew bundles..."
-$(command -v brew) bundle --file "${HOME}/.config/homebrew/Brewfile" install
-sudo mkdir -p /usr/local/lib
-sudo install -m 755 $(brew --prefix)/lib/libykcs11.dylib /usr/local/lib
+brew bundle --file "${HOME}/.config/homebrew/Brewfile" install
+brew_prefix=$(brew --prefix)
+if [ -d "${brew_prefix}" ]; then
+  sudo mkdir -p /usr/local/lib
+  sudo install -m 755 "${brew_prefix}"/lib/libykcs11.dylib /usr/local/lib
+fi
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
@@ -120,7 +123,7 @@ launchctl load ~/Library/LaunchAgents/local.unlink-google-drive.plist
 
 # Check local scripts.
 echo "Checking local scripts..."
-if $(command -v brew) list pycharm >/dev/null 2>&1; then
+if brew list pycharm >/dev/null 2>&1; then
   if [ -f "${HOME}/.local/bin/pycharm" ]; then
     chmod +x "${HOME}/.local/bin/pycharm"
     echo "PyCharm script can be found at ${HOME}/.local/bin/pycharm."
