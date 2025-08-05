@@ -107,10 +107,8 @@ curl -fsSL "${homebrew_install_path}" | bash
 echo "Installing Homebrew bundles..."
 brew bundle --file "${HOME}/.config/homebrew/Brewfile" install
 brew_prefix=$(brew --prefix)
-if [ -d "${brew_prefix}" ]; then
-  sudo mkdir -p /usr/local/lib
-  sudo install -m 755 "${brew_prefix}"/lib/libykcs11.dylib /usr/local/lib
-fi
+sudo mkdir -p /usr/local/lib
+sudo install -m 755 "${brew_prefix}"/lib/libykcs11.dylib /usr/local/lib
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
 if [ -d '/opt/homebrew/share' ]; then
