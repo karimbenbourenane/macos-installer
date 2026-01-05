@@ -23,13 +23,13 @@ if [ $# -gt 2 ]; then
 fi
 
 # Default GitHub username.
-github_username=""
+_github_username=""
 
 # Parse command-line arguments.
 case "$1" in
 --username | -u)
   shift
-  github_username="$1"
+  _github_username="$1"
   ;;
 --help | -h)
   usage
@@ -43,9 +43,9 @@ case "$1" in
 esac
 
 # If no username is provided, prompt the user.
-if [ -z "${github_username}" ]; then
+if [ -z "${_github_username}" ]; then
   echo "Enter your GitHub username: "
-  read -r github_username
+  read -r _github_username
 fi
 
 # Begin installation.
@@ -58,9 +58,14 @@ xcode-select --install
 
 # Create system Python symlinks.
 echo "Creating system Python symlinks..."
-clt_path=/Library/Developer/CommandLineTools
-sudo ln -s "${clt_path}"/usr/bin/python3 /usr/local/bin/python
-sudo ln -s "${clt_path}"/usr/bin/pip3 /usr/local/bin/pip
+sudo install -m 755 /dev/stdin /usr/local/bin/python <<'EOF'
+#!/bin/sh
+exec "$(xcode-select -p || true)/usr/bin/python3" "$@"
+EOF
+sudo install -m 755 /dev/stdin /usr/local/bin/pip <<'EOF'
+#!/bin/sh
+exec "$(xcode-select -p || true)/usr/bin/pip3" "$@"
+EOF
 
 # Enable Touch ID for sudo.
 echo "Enabling Touch ID for sudo..."
@@ -70,7 +75,7 @@ sudo sh -c 'sed -i "" "s/^#auth/auth/" /etc/pam.d/sudo_local'
 # Install chezmoi.
 echo "Installing chezmoi and dotfiles..."
 sh -c "$(curl -fsLS get.chezmoi.io || true)" \
-  -- -b "$(mktemp -d || true)" init "${github_username}" --ssh --apply
+  -- -b "$(mktemp -d || true)" init "${_github_username}" --ssh --apply
 
 # Create Developer directory for code repositories.
 echo "Creating user Developer directory..."
@@ -85,15 +90,16 @@ mkdir -p "${HOME}"/.local/state
 
 # Load XDG logout script.
 echo "Loading XDG logout script..."
-launchctl load ~/Library/LaunchAgents/org.freedesktop.specifications.plist
+_xdg_logout="${HOME}"/Library/LaunchAgents/org.freedesktop.specifications.plist
+launchctl load "${_xdg_logout}"
 
 # Set Zsh configuration directory globally to use standard XDG location.
 echo "Setting Zsh configuration directory globally..."
 # TODO: backup the original file if it already exists.
 sudo sh -c 'tee -a /etc/zshenv >/dev/null' <<'EOF'
 # Handle ZDOTDIR when it is set but not to the standard path for Zsh config.
-if [ -n "${ZDOTDIR}" ] && [ "${ZDOTDIR}" != "${HOME}"/.config/zsh ]; then
-    # Inform Jetbrains IDEs of true path of ${ZDOTDIR} make it empty.
+if [ -n "${ZDOTDIR-}" ] && [ "${ZDOTDIR}" != "${HOME}"/.config/zsh ]; then
+    # Tell JetBrains IDEs the standard ZDOTDIR path when using a custom one.
     JETBRAINS_INTELLIJ_ORIGINAL_ZDOTDIR="${HOME}"/.config/zsh
 else
     # Set ZDOTDIR to the standard path for Zsh config.
@@ -101,44 +107,50 @@ else
 fi
 EOF
 
+# Set GitHub content base URL to keep script paths short.
+_content_base_url="https://raw.githubusercontent.com"
+
 # Install Oh My Zsh.
 echo "Installing Oh My Zsh..."
 export ZDOTDIR="${HOME}/.config/zsh"
 export ZSH="${HOME}/.local/share/ohmyzsh"
-omz_install_path=ohmyzsh/ohmyzsh/master/tools/install.sh
-curl -fsSL "https://raw.githubusercontent.com/${omz_install_path}" | sh
+curl -fsSL "${_content_base_url}/ohmyzsh/ohmyzsh/master/tools/install.sh" | sh
 
 # Install Homebrew.
 echo "Installing Homebrew..."
-homebrew_install_path="Homebrew/install/HEAD/install.sh"
-curl -fsSL "${homebrew_install_path}" | bash
+curl -fsSL "${_content_base_url}/Homebrew/install/HEAD/install.sh" | bash
+_brew_prefix=${HOMEBREW_PREFIX:-$(brew --prefix || echo /usr/local)}
 
 # Install bundles (system packages and desktop apps).
 echo "Installing Homebrew bundles..."
 brew bundle --file "${HOME}/.config/homebrew/Brewfile" install
-brew_prefix=$(brew --prefix)
 sudo mkdir -p /usr/local/lib
-sudo install -m 755 "${brew_prefix}"/lib/libykcs11.dylib /usr/local/lib
+sudo install -m 755 "${_brew_prefix}"/lib/libykcs11.dylib /usr/local/lib
 
 # Fix permissions for some Homebrew packages on Apple Silicon.
-if [ -d '/opt/homebrew/share' ]; then
+if [ -d "${_brew_prefix}/share" ]; then
   echo "Fixing permissions for Homebrew packages..."
-  chmod -R go-w '/opt/homebrew/share'
+  chmod -R go-w "${_brew_prefix}/share"
 fi
 
-# Load Google Drive unlink script.
+# Load unlinking scripts.
 echo "Loading Google Drive unlink script..."
-launchctl load ~/Library/LaunchAgents/local.unlink-google-drive.plist
+launchctl load "${HOME}"/Library/LaunchAgents/local.unlink-google-drive.plist
+echo "Loading Python unlink script..."
+launchctl load "${HOME}"/Library/LaunchAgents/local.unlink-python.plist
 
-# Check local scripts.
+# Check local JetBrains scripts.
 echo "Checking local scripts..."
 if brew list pycharm >/dev/null 2>&1; then
-  if [ -f "${HOME}/.local/bin/pycharm" ]; then
+  _pycharm_path="${HOME}/.local/bin/pycharm"
+  if [ -f "${_pycharm_path}/" ]; then
     chmod +x "${HOME}/.local/bin/pycharm"
-    echo "PyCharm script can be found at ${HOME}/.local/bin/pycharm."
+    _pycharm_status="can be found at"
+    echo "PyCharm script can be found at ${_pycharm_path}."
   else
-    echo "PyCharm script is missing from ${HOME}/.local/bin/pycharm."
+    _pycharm_status="is missing from"
   fi
+  echo "PyCharm script ${_pycharm_status} ${_pycharm_path}."
 else
   echo "PyCharm is not installed."
 fi
