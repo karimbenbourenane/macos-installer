@@ -135,33 +135,23 @@ fi
 
 # Load unlinking scripts.
 echo "Loading Google Drive unlink script..."
-launchctl load "${HOME}"/Library/LaunchAgents/local.unlink-google-drive.plist
+if [ -f "${HOME}/Library/LaunchAgents/local.unlink-google-drive.plist" ]; then
+  launchctl load "${HOME}"/Library/LaunchAgents/local.unlink-google-drive.plist
+fi
 echo "Loading Python unlink script..."
-launchctl load "${HOME}"/Library/LaunchAgents/local.unlink-python.plist
+if [ -f "${HOME}/Library/LaunchAgents/local.unlink-python.plist" ]; then
+  launchctl load "${HOME}"/Library/LaunchAgents/local.unlink-python.plist
+fi
 
-# Check local JetBrains scripts.
-echo "Checking local scripts..."
-if brew list pycharm >/dev/null 2>&1; then
-  _pycharm_path="${HOME}/.local/bin/pycharm"
-  if [ -f "${_pycharm_path}/" ]; then
-    chmod +x "${HOME}/.local/bin/pycharm"
-    _pycharm_status="can be found at"
-    echo "PyCharm script can be found at ${_pycharm_path}."
-  else
-    _pycharm_status="is missing from"
-  fi
-  echo "PyCharm script ${_pycharm_status} ${_pycharm_path}."
-else
-  echo "PyCharm is not installed."
+# Load ChatGPT script.
+echo "Loading ChatGPT script..."
+if [ -f "${HOME}/Library/LaunchAgents/local.chatgpt.plist" ]; then
+  launchctl load "${HOME}"/Library/LaunchAgents/local.chatgpt.plist
 fi
 
 # Install all vim-plug plugins.
 echo "Installing vim-plug plugins..."
 vi -Esu "${HOME}/.config/vim/vimrc" +quitall
-
-# Install Github Copilot for command line.
-echo "Installing Github Copilot for command line..."
-gh extension install github/copilot-cli --force
 
 # Prevent macOS Finder from creating .DS_Store files on network shares
 echo "Preventing macOS Finder from creating .DS_Store files on network shares..."
